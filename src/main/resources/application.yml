@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1/simple?useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL57InnoDBDialect
+    open-in-view: true
+    hibernate:
+      ddl-auto: create-drop
+  devtools:
+    livereload:
+      enabled: true
+    add-properties: true
+    
+server:
+  port: 8085
+
+logging:
+  level:
+    web: debug
+    org:
+      hibernate:
+        SQL: debug
+
+environments:
+  loggin:
+    user: "martinr"
+    pass: "martin123"
+    id_tocken: "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ0aW5yIiwiYXV0aCI6IiIsImV4cCI6MTk3NjYyMDI3MH0.Eq3jdgwDtBnQMnirM5BpAqCRATJps2CtPEZE-cCFGRgyIyhhu2Z3U0tLJRiEViSiw7bs3V2Dt6PFqtTbf612SA"
+    id_franquicia: "3a0f8ad9-d554-49e8-acd6-55217b41194a"
+    
