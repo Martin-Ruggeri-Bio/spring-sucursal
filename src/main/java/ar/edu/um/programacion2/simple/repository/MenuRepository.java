@@ -18,9 +18,9 @@ import ar.edu.um.programacion2.simple.model.Menu;
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Long> {
 
-	public Optional<Menu> findByDocumento(Long documento);
+	public Optional<Menu> findById(Long documento);
 
 	@Modifying
-	public void deleteByDocumento(Long documento);
+	public void deleteById(Long documento);
 
 }
