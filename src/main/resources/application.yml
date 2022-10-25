@@ -25,6 +25,8 @@ logging:
         SQL: debug
 
 environments:
+  cron:
+    expression: "*/5 * * * * *"
   loggin:
     user: "martinr"
     pass: "martin123"

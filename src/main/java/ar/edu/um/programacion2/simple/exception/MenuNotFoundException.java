@@ -8,8 +8,8 @@ public class MenuNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = 3095543865324828748L;
 
-	public MenuNotFoundException(Long id) {
-		super("Cannot find Menu " + id);
+	public MenuNotFoundException(Integer menuId) {
+		super("Cannot find Menu " + menuId);
 	}
 
 }

@@ -16,11 +16,11 @@ import ar.edu.um.programacion2.simple.model.Menu;
  *
  */
 @Repository
-public interface MenuRepository extends JpaRepository<Menu, Long> {
+public interface MenuRepository extends JpaRepository<Menu, Integer> {
 
-	public Optional<Menu> findById(Long documento);
+	public Optional<Menu> findByMenuId(Integer menuId);
 
 	@Modifying
-	public void deleteById(Long documento);
+	public void deleteByMenuId(Integer menuId);
 
 }

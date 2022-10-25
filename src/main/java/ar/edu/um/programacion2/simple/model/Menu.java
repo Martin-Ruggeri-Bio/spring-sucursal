@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Menu {
 	@Id
-	private Long id;
+	private Integer menuId;
 	private String nombre;
 	private String descripcion;
 	private Float precio;
