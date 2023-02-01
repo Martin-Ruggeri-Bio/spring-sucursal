@@ -1,7 +1,7 @@
 package ar.edu.um.programacion2.simple.service;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -13,6 +13,9 @@ import ar.edu.um.programacion2.simple.model.Consulta;
 import ar.edu.um.programacion2.simple.model.Menu;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 @Service
 public class ConsultaService {
     @Value("${environments.loggin.user}")
@@ -21,35 +24,39 @@ public class ConsultaService {
     private String pass;
     @Value("${environments.loggin.id_tocken}")
     private String id_tocken;
-    @Value("${environments.loggin.id_franquicia}")
-    private String id_franquicia;
-    private String accion_consulta = "{\"accion\": \"consulta\", \"franquiciaID\": \"" + id_franquicia + "\"}";
-    @Autowired
+    private String jsonHead = "{\"accion\":\"consulta\",\"franquiciaID\":\"de0319e4-bde6-4898-8303-1307a3b9be56\"}";
+	@Autowired
 	private MenuService menuService;
+
     
     /**
      * @author Martin
-     * Funcion de web client que consulta a la sece central sobre si hay alguna novedad para sincronizarse
-     * devuelve un objeto ¿de tipo consulta o de tipo mono?
-     * la funcion block en teoria sirve para bloquear el proceso pra extraer el contenido, !preguntar!!!
+     * Funcion de web client que consulta a la sece central,
+     * una llamada POST a la API especificada en API_URL, sobre si hay alguna novedad para sincronizarse
+     * si hay menus nuevos el servidor le contesta con una lista de menus, o vacio
+     * Luego filtra la respuesta recibida para verificar que su acción sea "menu".
+     * Finalmente, devuelve la lista de menús obtenida de la respuesta.
      */
-    public Consulta sincronizacioConsulta() {
+    public Mono<List<Menu>> consultaMenus()  {
         WebClient webClient = WebClient
             .builder()
             .baseUrl("http://10.101.102.1:8080/api/accion")
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build();
 
-        Mono<Consulta> consulta = webClient
+        // Realiza la llamada POST a la API y almacena el resultado en un Mono de tipo Consulta
+        Mono<Consulta> respuestaServidor = webClient
             .post()
-            .uri("")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.id_tocken + "\"")
-            .body(BodyInserters.fromValue(accion_consulta))
+            .body(BodyInserters.fromValue(this.jsonHead))
             .retrieve()
             .bodyToMono(Consulta.class);
-        return consulta.block();
+        
+        // Filtra la respuesta recibida y solo retorna la lista de menús si la acción es "menu"
+        return respuestaServidor.filter(rs -> rs.getAccion().equals("menu"))
+            .map(Consulta::getMenus);
     }
 
     /**
@@ -57,19 +64,29 @@ public class ConsultaService {
      * Funcion que verifica si la accion que devuelve la consulta es menu
      * si es, sicroniza los menus nuevos con los menus que se encuentran en la base de datos
      */
-	public void verificar_accion(Consulta consulta){
-        if(consulta.getAccion() == "menu"){
-            this.sincronizar_menus(consulta);
-        }		
-	}
+    public boolean verificarMenus() {
+        Mono<List<Menu>> menuMono = consultaMenus();
+        if (menuMono.blockOptional().isPresent()) {
+            System.out.println("Hay menus nuevos.");
+            return true;
+        } else {
+            System.out.println("No hay menus nuevos.");
+            return false;
+        }
+    }       
+
+    public List<Menu> obtenerMenus() throws ExecutionException, InterruptedException {
+        Mono<List<Menu>> menuList = consultaMenus();
+        return menuList.block();
+    }
 
     /**
      * @author Martin
      * Funcion que actua sobre la base de datos de menus segun la comparacion de ambos contenidos
      */
-	public void sincronizar_menus(Consulta consulta){
+	public void sincronizar_menus(List<Menu> menus){
         //recorro los menus
-        for(Menu menu : consulta.getMenus()) {
+        for(Menu menu : menus) {
             //consulto si ese menu existe en la base de datos
             Menu menu_guardado = menuService.findByMenuId(menu.getMenuId());
             if (menu_guardado == null) {
@@ -85,14 +102,25 @@ public class ConsultaService {
         }		
 	}
 
-    /**
+        /**
      * @author Martin
      * Funcion que se ejecuta periodicamente para checkear si hay nueva informacion en la sede central
      * si asi fuera disparar la accion de verificar el contenido
      */
     @Scheduled(cron = "${environments.cron.expression}")
     public void check(){
-        Consulta consulta = this.sincronizacioConsulta();
-        this.verificar_accion(consulta);
+        try {
+            List<Menu> menus = this.obtenerMenus();
+            boolean hayMenus = this.verificarMenus();
+            if (hayMenus){
+                for (Menu menu : menus) {
+                    System.out.println(menu.getNombre());
+                }
+                this.sincronizar_menus(menus);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
+
 }

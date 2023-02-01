@@ -1,6 +1,3 @@
-/**
- * 
- */
 package ar.edu.um.programacion2.simple.service;
 
 import java.util.List;
@@ -9,10 +6,12 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import ar.edu.um.programacion2.simple.exception.MenuNotFoundException;
 import ar.edu.um.programacion2.simple.model.Menu;
 import ar.edu.um.programacion2.simple.repository.MenuRepository;
+
 
 /**
  * @author Martin
@@ -21,6 +20,15 @@ import ar.edu.um.programacion2.simple.repository.MenuRepository;
 @Service
 public class MenuService {
 
+	@Value("${environments.loggin.user}")
+    private String user;
+    @Value("${environments.loggin.pass}")
+    private String pass;
+    @Value("${environments.loggin.id_tocken}")
+    private String id_tocken;
+    @Value("${environments.loggin.franquiciaId}")
+    private String franquiciaId;
+	
 	@Autowired
 	private MenuRepository repository;
 
@@ -62,3 +70,4 @@ public class MenuService {
 	}
 
 }
+
