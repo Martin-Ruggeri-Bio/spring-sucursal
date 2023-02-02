@@ -40,23 +40,23 @@ public class MenuService {
 		return repository.findAll();
 	}
 
-	public Menu findByMenuId(Integer menuId) {
-		return repository.findByMenuId(menuId).orElseThrow(() -> new MenuNotFoundException(menuId));
+	public Menu findById(Integer id) {
+		return repository.findById(id).orElseThrow(() -> new MenuNotFoundException(id));
 	}
 
 	@Transactional
-	public Boolean deleteByMenuId(Integer menuId) {
-		if (repository.findByMenuId(menuId).isEmpty()) {
+	public Boolean deleteById(Integer id) {
+		if (repository.findById(id).isEmpty()) {
 			return false;
 		}
-		repository.deleteByMenuId(menuId);
-		return !repository.findByMenuId(menuId).isPresent();
+		repository.deleteById(id);
+		return !repository.findById(id).isPresent();
 	}
 
-	public Menu update(Menu newMenu, Integer menuId) {
-		return repository.findByMenuId(menuId).map(menu -> {
+	public Menu update(Menu newMenu, Integer id) {
+		return repository.findById(id).map(menu -> {
 			menu = new Menu(
-				menuId,
+				id,
 				newMenu.getNombre(),
 				newMenu.getDescripcion(),
 				newMenu.getPrecio(),
@@ -66,7 +66,7 @@ public class MenuService {
 				newMenu.getActualizado()
 				);
 			return repository.save(menu);
-		}).orElseThrow(() -> new MenuNotFoundException(menuId));
+		}).orElseThrow(() -> new MenuNotFoundException(id));
 	}
 
 }

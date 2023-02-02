@@ -14,7 +14,6 @@ import ar.edu.um.programacion2.simple.model.Menu;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class ConsultaService {
@@ -34,10 +33,8 @@ public class ConsultaService {
      * Funcion de web client que consulta a la sece central,
      * una llamada POST a la API especificada en API_URL, sobre si hay alguna novedad para sincronizarse
      * si hay menus nuevos el servidor le contesta con una lista de menus, o vacio
-     * Luego filtra la respuesta recibida para verificar que su acción sea "menu".
-     * Finalmente, devuelve la lista de menús obtenida de la respuesta.
      */
-    public Mono<List<Menu>> consultaMenus()  {
+    public Consulta consultaMenus()  {
         WebClient webClient = WebClient
             .builder()
             .baseUrl("http://10.101.102.1:8080/api/accion")
@@ -45,7 +42,7 @@ public class ConsultaService {
             .build();
 
         // Realiza la llamada POST a la API y almacena el resultado en un Mono de tipo Consulta
-        Mono<Consulta> respuestaServidor = webClient
+        Mono<Consulta> consulta = webClient
             .post()
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -54,41 +51,21 @@ public class ConsultaService {
             .retrieve()
             .bodyToMono(Consulta.class);
         
-        // Filtra la respuesta recibida y solo retorna la lista de menús si la acción es "menu"
-        return respuestaServidor.filter(rs -> rs.getAccion().equals("menu"))
-            .map(Consulta::getMenus);
-    }
+        return consulta.block();
 
-    /**
-     * @author Martin
-     * Funcion que verifica si la accion que devuelve la consulta es menu
-     * si es, sicroniza los menus nuevos con los menus que se encuentran en la base de datos
-     */
-    public boolean verificarMenus() {
-        Mono<List<Menu>> menuMono = consultaMenus();
-        if (menuMono.blockOptional().isPresent()) {
-            System.out.println("Hay menus nuevos.");
-            return true;
-        } else {
-            System.out.println("No hay menus nuevos.");
-            return false;
-        }
-    }       
-
-    public List<Menu> obtenerMenus() throws ExecutionException, InterruptedException {
-        Mono<List<Menu>> menuList = consultaMenus();
-        return menuList.block();
     }
 
     /**
      * @author Martin
      * Funcion que actua sobre la base de datos de menus segun la comparacion de ambos contenidos
      */
-	public void sincronizar_menus(List<Menu> menus){
+	public void sincronizarMenus(List<Menu> menus){
         //recorro los menus
         for(Menu menu : menus) {
             //consulto si ese menu existe en la base de datos
-            Menu menu_guardado = menuService.findByMenuId(menu.getMenuId());
+            System.out.println(menu);
+            Menu menu_guardado = menuService.findById(menu.getId());
+            System.out.println(menu_guardado);
             if (menu_guardado == null) {
                 //si no existe lo agrego
                 menuService.add(menu);
@@ -96,7 +73,7 @@ public class ConsultaService {
                 // si existe comparo ambos menus
                 if (menu_guardado != menu){
                     // si son distintos lo actualizo
-                    menuService.update(menu, menu.getMenuId());
+                    menuService.update(menu, menu.getId());
                 }
             }
         }		
@@ -110,13 +87,16 @@ public class ConsultaService {
     @Scheduled(cron = "${environments.cron.expression}")
     public void check(){
         try {
-            List<Menu> menus = this.obtenerMenus();
-            boolean hayMenus = this.verificarMenus();
-            if (hayMenus){
-                for (Menu menu : menus) {
-                    System.out.println(menu.getNombre());
-                }
-                this.sincronizar_menus(menus);
+            Consulta consulta = this.consultaMenus();
+            // Funcion que verifica si la accion que devuelve la consulta es menu
+            // si es, sicroniza los menus nuevos con los menus que se encuentran en la base de datos
+            if(consulta.getAccion().equals("menu")){
+                System.out.println("Hay menus nuevos.");
+                List<Menu> menus = consulta.getMenus();
+                System.out.println(menus);
+                this.sincronizarMenus(menus);
+            }else {
+                System.out.println("No hay menus nuevos.");
             }
         } catch (Exception e) {
             System.out.println(e);

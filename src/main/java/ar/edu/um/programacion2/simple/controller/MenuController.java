@@ -37,10 +37,10 @@ public class MenuController {
 		return new ResponseEntity<List<Menu>>(service.findAll(), HttpStatus.OK);
 	}
 
-	@GetMapping("/{menuId}")
-	public ResponseEntity<Menu> findByMenuId(@PathVariable Integer menuId) {
+	@GetMapping("/{id}")
+	public ResponseEntity<Menu> findById(@PathVariable Integer id) {
 		try {
-			return new ResponseEntity<Menu>(service.findByMenuId(menuId), HttpStatus.OK);
+			return new ResponseEntity<Menu>(service.findById(id), HttpStatus.OK);
 		} catch (MenuNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
@@ -51,15 +51,15 @@ public class MenuController {
 		return new ResponseEntity<Menu>(service.add(menu), HttpStatus.OK);
 	}
 
-	@DeleteMapping("/{menuId}")
-	public ResponseEntity<Boolean> deleteByMenuId(@PathVariable Integer menuId) {
-		log.debug("Eliminando cliente {}", menuId);
-		return new ResponseEntity<Boolean>(service.deleteByMenuId(menuId), HttpStatus.OK);
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Boolean> deleteById(@PathVariable Integer id) {
+		log.debug("Eliminando cliente {}", id);
+		return new ResponseEntity<Boolean>(service.deleteById(id), HttpStatus.OK);
 	}
 
-	@PutMapping("/{menuId}")
-	public ResponseEntity<Menu> update(@RequestBody Menu menu, @PathVariable Integer menuId) {
-		return new ResponseEntity<Menu>(service.update(menu, menuId), HttpStatus.OK);
+	@PutMapping("/{id}")
+	public ResponseEntity<Menu> update(@RequestBody Menu menu, @PathVariable Integer id) {
+		return new ResponseEntity<Menu>(service.update(menu, id), HttpStatus.OK);
 	}
 
 }
