@@ -33,3 +33,7 @@ environments:
     id_tocken: "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ0aW5yIiwiYXV0aCI6IiIsImV4cCI6MTk5MDQ0NTc4NH0.MZydRL4O6vH_rpsv2c3Jk8b6ql9w9kG4SJxN6GUeH7JYG3bxYmOqypnbT9YWuvlbJ1ZyaJqzxIVwaq1vslRYbg"
     franquiciaId: "de0319e4-bde6-4898-8303-1307a3b9be56"
 
+jwt:
+  secret: secret
+  expiration: 3600
+  accessTokenCookieName: AuthToken
