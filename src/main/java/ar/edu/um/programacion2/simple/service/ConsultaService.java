@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-
+import ar.edu.um.programacion2.simple.exception.MenuNotFoundException;
 import ar.edu.um.programacion2.simple.model.Consulta;
 import ar.edu.um.programacion2.simple.model.Menu;
 import reactor.core.publisher.Mono;
@@ -27,7 +27,6 @@ public class ConsultaService {
 	@Autowired
 	private MenuService menuService;
 
-    
     /**
      * @author Martin
      * Funcion de web client que consulta a la sece central,
@@ -61,25 +60,26 @@ public class ConsultaService {
      */
 	public void sincronizarMenus(List<Menu> menus){
         //recorro los menus
+        System.out.println("sincronizando menus");
         for(Menu menu : menus) {
-            //consulto si ese menu existe en la base de datos
-            System.out.println(menu);
-            Menu menu_guardado = menuService.findById(menu.getId());
-            System.out.println(menu_guardado);
-            if (menu_guardado == null) {
-                //si no existe lo agrego
-                menuService.add(menu);
-            } else {
-                // si existe comparo ambos menus
-                if (menu_guardado != menu){
-                    // si son distintos lo actualizo
-                    menuService.update(menu, menu.getId());
+            try {
+                //consulto si ese menu existe en la base de datos
+                Menu menu_guardado = this.menuService.findById(menu.getId());
+                if (menu.equals(menu_guardado)) {
+                    System.out.println("Los menus son iguales, no se actualiza");
+                } else {
+                    System.out.println("Los menus no son iguales, si se actualiza");
+                    this.menuService.update(menu, menu.getId());
                 }
+            } catch (MenuNotFoundException e) {
+                System.out.println(e);
+                System.out.println("El menu no existe en la base de datos, se agrega");
+                this.menuService.add(menu);
             }
         }		
 	}
 
-        /**
+    /**
      * @author Martin
      * Funcion que se ejecuta periodicamente para checkear si hay nueva informacion en la sede central
      * si asi fuera disparar la accion de verificar el contenido

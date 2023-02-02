@@ -30,6 +30,8 @@ public class Application implements CommandLineRunner {
 			"2022-07-31T12:00:00Z",
 			"2022-07-31T12:00:00Z"
 		);
+		System.out.println("este es el menu por default");
+		System.out.println(menu);
 		menu = menuService.add(menu);
 		
 	}
