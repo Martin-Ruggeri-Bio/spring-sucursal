@@ -10,7 +10,13 @@ import javax.validation.constraints.NotNull;
 
 import ar.edu.um.programacion2.simple.security.enums.RoleList;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,22 +24,5 @@ public class Role {
     @NotNull
     @Enumerated(EnumType.STRING)
     private RoleList roleName;
-    public Role() {
-    }
-    public Role(@NotNull RoleList roleName) {
-        this.roleName = roleName;
-    }
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
-    public RoleList getRoleName() {
-        return roleName;
-    }
-    public void setRoleName(RoleList roleName) {
-        this.roleName = roleName;
-    }
     
 }

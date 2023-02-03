@@ -1,5 +1,4 @@
-package ar.edu.um.programacion2.simple.security.respositories;
-
+package ar.edu.um.programacion2.simple.repository;
 import java.util.Optional;
 
 import ar.edu.um.programacion2.simple.model.User;

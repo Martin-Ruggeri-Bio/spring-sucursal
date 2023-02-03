@@ -1,4 +1,4 @@
-package ar.edu.um.programacion2.simple.security.services;
+package ar.edu.um.programacion2.simple.service;
 
 import ar.edu.um.programacion2.simple.model.MainUser;
 import ar.edu.um.programacion2.simple.model.User;

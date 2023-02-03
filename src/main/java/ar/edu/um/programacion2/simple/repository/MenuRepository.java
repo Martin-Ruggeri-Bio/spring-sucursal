@@ -1,6 +1,3 @@
-/**
- * 
- */
 package ar.edu.um.programacion2.simple.repository;
 
 import java.util.Optional;
@@ -13,7 +10,7 @@ import ar.edu.um.programacion2.simple.model.Menu;
 
 /**
  * @author Martin
- *
+ * JpaRepository trae todas las operraciones basicas de un crud
  */
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Integer> {

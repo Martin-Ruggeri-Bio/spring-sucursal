@@ -8,7 +8,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ar.edu.um.programacion2.simple.security.services.UserDetailsServiceImpl;
+import ar.edu.um.programacion2.simple.service.UserDetailsServiceImpl;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

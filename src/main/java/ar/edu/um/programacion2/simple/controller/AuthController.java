@@ -1,4 +1,4 @@
-package ar.edu.um.programacion2.simple.security.controllers;
+package ar.edu.um.programacion2.simple.controller;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -7,15 +7,15 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import ar.edu.um.programacion2.simple.model.Mensaje;
-import ar.edu.um.programacion2.simple.security.dtos.LoginUser;
-import ar.edu.um.programacion2.simple.security.dtos.NewUser;
+import ar.edu.um.programacion2.simple.model.Message;
+import ar.edu.um.programacion2.simple.dtos.LoginUser;
+import ar.edu.um.programacion2.simple.dtos.NewUser;
 import ar.edu.um.programacion2.simple.model.Role;
 import ar.edu.um.programacion2.simple.model.User;
 import ar.edu.um.programacion2.simple.security.enums.RoleList;
 import ar.edu.um.programacion2.simple.security.jwt.JwtProvider;
-import ar.edu.um.programacion2.simple.security.services.RoleService;
-import ar.edu.um.programacion2.simple.security.services.UserService;
+import ar.edu.um.programacion2.simple.service.RoleService;
+import ar.edu.um.programacion2.simple.service.UserService;
 
 import ar.edu.um.programacion2.simple.security.util.CookieUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class AuthController {
     public ResponseEntity<Object> login(HttpServletResponse httpServletResponse,
             @Valid @RequestBody LoginUser loginUser, BindingResult bidBindingResult){
         if(bidBindingResult.hasErrors())
-            return new ResponseEntity<>(new Mensaje("Revise sus credenciales"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("Revise sus credenciales"), HttpStatus.BAD_REQUEST);
         try {
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(loginUser.getUserName(), loginUser.getPassword())
@@ -64,15 +64,15 @@ public class AuthController {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 String jwt = jwtProvider.generateToken(authentication);
             CookieUtil.create(httpServletResponse, cookieName, jwt, true, -1, "dev-store-demo.firebaseapp.com");
-                return new ResponseEntity<>(new Mensaje("Sesión iniciada"), HttpStatus.OK);
+                return new ResponseEntity<>(new Message("Sesión iniciada"), HttpStatus.OK);
         } catch (Exception e) {
-                return new ResponseEntity<>(new Mensaje("Revise sus credenciales"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new Message("Revise sus credenciales"), HttpStatus.BAD_REQUEST);
         }
     }
     @PostMapping("/register")
     public ResponseEntity<Object> resgister(@Valid @RequestBody NewUser newUser, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
-            return new ResponseEntity<>(new Mensaje("Revise los campos e intente nuevamente"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("Revise los campos e intente nuevamente"), HttpStatus.BAD_REQUEST);
         User user = new User(newUser.getUserName(), newUser.getEmail(),
                 passwordEncoder.encode(newUser.getPassword()));
         Set<Role> roles = new HashSet<>();
@@ -81,7 +81,7 @@ public class AuthController {
         roles.add(roleService.getByRoleName(RoleList.ROLE_USER).get());
         user.setRoles(roles);
         userService.save(user);
-        return new ResponseEntity<>(new Mensaje("Registro exitoso! Inicie sesión"), HttpStatus.CREATED);
+        return new ResponseEntity<>(new Message("Registro exitoso! Inicie sesión"), HttpStatus.CREATED);
     }
     @GetMapping("/details")
     public ResponseEntity<Object> getUserDetails(){
@@ -90,13 +90,13 @@ public class AuthController {
         String userName = userDetails.getUsername();
         Optional<User> user= this.userService.getByUserName(userName);
         if (!user.isPresent())
-            return new ResponseEntity<>(new Mensaje("No encotrado"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Message("No encotrado"), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(user.get(), HttpStatus.OK) ;
     }
     @GetMapping("/logout")
-    public ResponseEntity<Mensaje> logOut(HttpServletResponse httpServletResponse){
+    public ResponseEntity<Message> logOut(HttpServletResponse httpServletResponse){
         CookieUtil.clear(httpServletResponse,cookieName);
-        return new ResponseEntity<>(new Mensaje("Sesión cerrada"), HttpStatus.OK) ;
+        return new ResponseEntity<>(new Message("Sesión cerrada"), HttpStatus.OK) ;
     }
     
 }

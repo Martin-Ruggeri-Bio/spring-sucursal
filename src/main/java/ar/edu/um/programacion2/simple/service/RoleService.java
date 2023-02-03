@@ -1,4 +1,4 @@
-package ar.edu.um.programacion2.simple.security.services;
+package ar.edu.um.programacion2.simple.service;
 
 import java.util.Optional;
 
@@ -6,7 +6,7 @@ import javax.transaction.Transactional;
 
 import ar.edu.um.programacion2.simple.model.Role;
 import ar.edu.um.programacion2.simple.security.enums.RoleList;
-import ar.edu.um.programacion2.simple.security.respositories.RoleRepository;
+import ar.edu.um.programacion2.simple.repository.RoleRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,14 +15,11 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class RoleService {
 
-    private final RoleRepository roleRepository;
-
     @Autowired
-    public RoleService(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
+    private RoleRepository roleRepository;
+
     public Optional<Role> getByRoleName(RoleList roleName){
-        return roleRepository.findByRoleName(roleName);
+        return this.roleRepository.findByRoleName(roleName);
     }
     
     

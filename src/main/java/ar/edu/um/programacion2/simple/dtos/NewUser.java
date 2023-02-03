@@ -1,4 +1,4 @@
-package ar.edu.um.programacion2.simple.security.dtos;
+package ar.edu.um.programacion2.simple.dtos;
 
 import java.util.HashSet;
 import java.util.Set;
