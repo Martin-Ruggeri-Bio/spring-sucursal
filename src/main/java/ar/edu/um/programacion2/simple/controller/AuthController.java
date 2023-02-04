@@ -34,24 +34,21 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    private final AuthenticationManager authenticationManager;
-    private final PasswordEncoder passwordEncoder;
-    private final UserService userService;
-    private final RoleService roleService;
-    private final JwtProvider jwtProvider;
 
     @Value("${jwt.accessTokenCookieName}")
     private String cookieName;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder,
-            UserService userService, RoleService roleService, JwtProvider jwtProvider) {
-        this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
-        this.userService = userService;
-        this.roleService = roleService;
-        this.jwtProvider = jwtProvider;
-    }
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private JwtProvider jwtProvider;
+
     @PostMapping("/login")
     public ResponseEntity<Object> login(HttpServletResponse httpServletResponse,
             @Valid @RequestBody LoginUser loginUser, BindingResult bidBindingResult){

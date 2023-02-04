@@ -16,12 +16,9 @@ import java.util.List;
 @RequestMapping("/sale")
 public class SaleController {
 
-    private final SaleService saleService;
-
     @Autowired
-    public SaleController(SaleService saleService) {
-        this.saleService = saleService;
-    }
+    private SaleService saleService;
+
     @GetMapping("/client")
     public ResponseEntity<List<Sale>> getByClient(){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()

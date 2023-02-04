@@ -17,12 +17,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/shoppingList")
 public class ShoppingCartController {
-    private final ShoppingCartService shoppingCartService;
 
     @Autowired
-    public ShoppingCartController(ShoppingCartService shoppingCartService) {
-        this.shoppingCartService = shoppingCartService;
-    }
+    private ShoppingCartService shoppingCartService;
 
     @GetMapping()
     public ResponseEntity<List<ShoppingCart>> getListByClient(){

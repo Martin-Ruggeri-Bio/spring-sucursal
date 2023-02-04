@@ -12,11 +12,9 @@ import java.util.List;
 @Transactional
 public class ShoppingCartService {
 
-    private final ShoppingCartRepository shoppingCartRepository;
     @Autowired
-    public ShoppingCartService(ShoppingCartRepository shoppingCartRepository) {
-        this.shoppingCartRepository = shoppingCartRepository;
-    }
+    private ShoppingCartRepository shoppingCartRepository;
+
     public List<ShoppingCart> getListByClient(String userName){
         return this.shoppingCartRepository.findByClient_UserName(userName);
     }

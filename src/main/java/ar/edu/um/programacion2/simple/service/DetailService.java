@@ -12,12 +12,9 @@ import java.util.List;
 @Transactional
 public class DetailService {
 
-    private final DetailRepository detailRepository;
-
     @Autowired
-    public DetailService(DetailRepository detailRepository) {
-        this.detailRepository = detailRepository;
-    }
+    private DetailRepository detailRepository;
+
     public void createDetail(Detail detail){
         this.detailRepository.save(detail);
     }

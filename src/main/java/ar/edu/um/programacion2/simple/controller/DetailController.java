@@ -16,12 +16,9 @@ import java.util.List;
 @RequestMapping("/saleDetail")
 public class DetailController {
 
-    private final DetailService detailService;
-
     @Autowired
-    public DetailController(DetailService detailService) {
-        this.detailService = detailService;
-    }
+    private DetailService detailService;
+
     @GetMapping("/{sale_id}")
     public ResponseEntity<List<Detail>> getDetailsBySale(@PathVariable("sale_id")String id){
         return new ResponseEntity<>(this.detailService.getDetailBySale(id), HttpStatus.OK);

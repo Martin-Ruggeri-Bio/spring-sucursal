@@ -20,18 +20,14 @@ import java.util.Locale;
 @Transactional
 public class SaleService {
 
-    private final SaleRepository saleRepository;
-    private final UserService userService;
-    private final ShoppingCartService shoppingCartService;
-    private final DetailService detailService;
     @Autowired
-    public SaleService(SaleRepository saleRepository, UserService userService, ShoppingCartService shoppingCartService,
-                       DetailService detailService) {
-        this.saleRepository = saleRepository;
-        this.userService = userService;
-        this.shoppingCartService = shoppingCartService;
-        this.detailService = detailService;
-    }
+    private SaleRepository saleRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ShoppingCartService shoppingCartService;
+    @Autowired
+    private DetailService detailService;
 
     public List<Sale> getSalesByClient(String userName){
         return this.saleRepository.findByClient_UserName(userName);
