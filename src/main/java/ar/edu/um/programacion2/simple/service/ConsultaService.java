@@ -9,8 +9,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import ar.edu.um.programacion2.simple.exception.MenuNotFoundException;
-import ar.edu.um.programacion2.simple.model.Consulta;
+import ar.edu.um.programacion2.simple.dtos.Consulta;
 import ar.edu.um.programacion2.simple.model.Menu;
+import ar.edu.um.programacion2.simple.model.ReporteHistorico;
+import ar.edu.um.programacion2.simple.model.ReporteRecurrente;
+import ar.edu.um.programacion2.simple.dtos.Reporte;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -26,6 +29,10 @@ public class ConsultaService {
     private String jsonHead = "{\"accion\":\"consulta\",\"franquiciaID\":\"de0319e4-bde6-4898-8303-1307a3b9be56\"}";
 	@Autowired
 	private MenuService menuService;
+    @Autowired
+	private ReporteHistoricoService reporteHistoricoService;
+    @Autowired
+	private ReporteRecurrenteService reporteRecurrenteService;
 
     /**
      * @author Martin
@@ -33,7 +40,7 @@ public class ConsultaService {
      * una llamada POST a la API especificada en API_URL, sobre si hay alguna novedad para sincronizarse
      * si hay menus nuevos el servidor le contesta con una lista de menus, o vacio
      */
-    public Consulta consultaMenus()  {
+    public Consulta consulta()  {
         WebClient webClient = WebClient
             .builder()
             .baseUrl("http://10.101.102.1:8080/api/accion")
@@ -79,6 +86,33 @@ public class ConsultaService {
         }		
 	}
 
+    public void guardarReportes(Reporte reporte){
+        //recorro los menus
+        System.out.println("Evaluando reporte");
+        if(reporte.getTipo().equals("historico")){
+            System.out.println("Hay reporte historico.");
+            ReporteHistorico reporteHistorico = new ReporteHistorico(
+                reporte.getId(),
+                reporte.getTipo(),
+                reporte.getFechaInicio(),
+                reporte.getFechaFin()
+            );
+            this.reporteHistoricoService.add(reporteHistorico);
+        }else if(reporte.getTipo().equals("recurrente")){
+            System.out.println("Hay reporte recurrente.");
+            ReporteRecurrente reporteRecurrente = new ReporteRecurrente(
+                reporte.getId(),
+                reporte.getTipo(),
+                reporte.getFechaInicio(),
+                reporte.getFechaFin(),
+                reporte.getIntervalo()
+            );
+            this.reporteRecurrenteService.add(reporteRecurrente);
+        }else{
+            System.out.println("No hay reportes.");
+        }		
+	}
+
     /**
      * @author Martin
      * Funcion que se ejecuta periodicamente para checkear si hay nueva informacion en la sede central
@@ -87,7 +121,7 @@ public class ConsultaService {
     @Scheduled(cron = "${environments.cron.expression}")
     public void check(){
         try {
-            Consulta consulta = this.consultaMenus();
+            Consulta consulta = this.consulta();
             // Funcion que verifica si la accion que devuelve la consulta es menu
             // si es, sicroniza los menus nuevos con los menus que se encuentran en la base de datos
             if(consulta.getAccion().equals("menu")){
@@ -95,8 +129,12 @@ public class ConsultaService {
                 List<Menu> menus = consulta.getMenus();
                 System.out.println(menus);
                 this.sincronizarMenus(menus);
-            }else {
-                System.out.println("No hay menus nuevos.");
+            }else if (consulta.getAccion().equals("reporte")){
+                System.out.println("Hay reportes nuevos.");
+                Reporte reporte = consulta.getReporte();
+                this.guardarReportes(reporte);
+            }else{
+                System.out.println("No hay nada nuevo.");
             }
         } catch (Exception e) {
             System.out.println(e);
