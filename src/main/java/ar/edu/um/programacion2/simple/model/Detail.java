@@ -16,16 +16,15 @@ public class Detail {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-
     private String id;
+    
     @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
-
     private Menu menu;
+    
     @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
-
     private Sale sale;
-    @NotNull
 
+    @NotNull
     private int amount;
 
 }

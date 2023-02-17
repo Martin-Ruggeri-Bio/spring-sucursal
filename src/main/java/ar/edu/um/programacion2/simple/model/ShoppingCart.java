@@ -15,15 +15,14 @@ public class ShoppingCart {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-
     private String id;
+    
     @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
-
     private Menu menu;
+
     @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
-
     private User client;
-    @NotNull
 
+    @NotNull
     private int amount;
 }

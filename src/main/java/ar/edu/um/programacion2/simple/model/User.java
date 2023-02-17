@@ -32,12 +32,15 @@ public class User {
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
+
     @NotNull
     @NaturalId
     @Column(unique = true)
     private String userName;
+
     @NotNull
     private String email;
+    
     @NotNull
     private String password;
     @NotNull

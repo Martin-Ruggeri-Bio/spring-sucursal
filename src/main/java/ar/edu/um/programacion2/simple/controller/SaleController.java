@@ -19,6 +19,7 @@ public class SaleController {
     @Autowired
     private SaleService saleService;
 
+    // ventas realizadas a un cliente especifico
     @GetMapping("/client")
     public ResponseEntity<List<Sale>> getByClient(){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()

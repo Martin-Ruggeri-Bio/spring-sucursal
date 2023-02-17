@@ -1,0 +1,47 @@
+{"properties": [
+  {
+    "name": "cron.expression",
+    "type": "java.lang.String",
+    "description": "A description for 'cron.expression'"
+  },
+  {
+    "name": "logginSucursal.user",
+    "type": "java.lang.String",
+    "description": "A description for 'logginSucursal.user'"
+  },
+  {
+    "name": "logginSucursal.user",
+    "type": "java.lang.String",
+    "description": "A description for 'logginSucursal.user'"
+  },
+  {
+    "name": "logginSucursal.pass",
+    "type": "java.lang.String",
+    "description": "A description for 'logginSucursal.pass'"
+  },
+  {
+    "name": "logginSucursal.id_tocken",
+    "type": "java.lang.String",
+    "description": "A description for 'logginSucursal.id_tocken'"
+  },
+  {
+    "name": "logginSucursal.consultaJsonHead",
+    "type": "java.lang.String",
+    "description": "A description for 'logginSucursal.consultaJsonHead'"
+  },
+  {
+    "name": "jwt.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.secret'"
+  },
+  {
+    "name": "jwt.expiration",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.expiration'"
+  },
+  {
+    "name": "jwt.accessTokenCookieName",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.accessTokenCookieName'"
+  }
+]}

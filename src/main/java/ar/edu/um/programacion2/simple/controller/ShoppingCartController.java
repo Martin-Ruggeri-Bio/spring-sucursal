@@ -23,8 +23,10 @@ public class ShoppingCartController {
 
     @GetMapping()
     public ResponseEntity<List<ShoppingCart>> getListByClient(){
+        // obtenemos el userdetail que es donde se guarda la informacion del usuario autenticado
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
+        // obtenemos el nombre para realizar la busqueda
         String userName = userDetails.getUsername();
         return new ResponseEntity<>(this.shoppingCartService.getListByClient(userName), HttpStatus.OK);
     }

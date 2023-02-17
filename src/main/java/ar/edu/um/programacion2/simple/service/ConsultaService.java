@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.http.HttpHeaders;
@@ -19,14 +20,16 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Service
+@Transactional
 public class ConsultaService {
-    @Value("${environments.loggin.user}")
+    @Value("${logginSucursal.user}")
     private String user;
-    @Value("${environments.loggin.pass}")
+    @Value("${logginSucursal.pass}")
     private String pass;
-    @Value("${environments.loggin.id_tocken}")
+    @Value("${logginSucursal.id_tocken}")
     private String id_tocken;
-    private String jsonHead = "{\"accion\":\"consulta\",\"franquiciaID\":\"de0319e4-bde6-4898-8303-1307a3b9be56\"}";
+    @Value("${logginSucursal.consultaJsonHead}")
+    private String consultaJsonHead;
 	@Autowired
 	private MenuService menuService;
     @Autowired
@@ -53,7 +56,7 @@ public class ConsultaService {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.id_tocken + "\"")
-            .body(BodyInserters.fromValue(this.jsonHead))
+            .body(BodyInserters.fromValue(this.consultaJsonHead))
             .retrieve()
             .bodyToMono(Consulta.class);
         
@@ -118,7 +121,7 @@ public class ConsultaService {
      * Funcion que se ejecuta periodicamente para checkear si hay nueva informacion en la sede central
      * si asi fuera disparar la accion de verificar el contenido
      */
-    @Scheduled(cron = "${environments.cron.expression}")
+    @Scheduled(cron = "${cron.expression}")
     public void check(){
         try {
             Consulta consulta = this.consulta();

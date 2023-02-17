@@ -32,7 +32,7 @@ public class MenuController {
 	@Autowired
 	private MenuService service;
 
-	@GetMapping("/")
+	@GetMapping("/all")
 	public ResponseEntity<List<Menu>> findAll() {
 		return new ResponseEntity<List<Menu>>(service.findAll(), HttpStatus.OK);
 	}
@@ -46,7 +46,7 @@ public class MenuController {
 		}
 	}
 
-	@PostMapping("/")
+	@PostMapping("/create")
 	public ResponseEntity<Menu> add(@RequestBody Menu menu) {
 		return new ResponseEntity<Menu>(service.add(menu), HttpStatus.OK);
 	}
@@ -57,7 +57,7 @@ public class MenuController {
 		return new ResponseEntity<Boolean>(service.deleteById(id), HttpStatus.OK);
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping("/update/{id}")
 	public ResponseEntity<Menu> update(@RequestBody Menu menu, @PathVariable Integer id) {
 		return new ResponseEntity<Menu>(service.update(menu, id), HttpStatus.OK);
 	}
