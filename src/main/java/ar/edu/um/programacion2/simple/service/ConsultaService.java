@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Service
-@Transactional
+// @Transactional
 public class ConsultaService {
     @Value("${logginSucursal.user}")
     private String user;
@@ -43,6 +43,7 @@ public class ConsultaService {
      * una llamada POST a la API especificada en API_URL, sobre si hay alguna novedad para sincronizarse
      * si hay menus nuevos el servidor le contesta con una lista de menus, o vacio
      */
+    @Transactional
     public Consulta consulta()  {
         WebClient webClient = WebClient
             .builder()
@@ -82,11 +83,20 @@ public class ConsultaService {
                     this.menuService.update(menu, menu.getId());
                 }
             } catch (MenuNotFoundException e) {
-                System.out.println(e);
                 System.out.println("El menu no existe en la base de datos, se agrega");
                 this.menuService.add(menu);
+                try {
+                    //consulto si ese menu existe en la base de datos
+                    Menu menu_guardado = this.menuService.findById(menu.getId());
+                    System.out.println(menu_guardado);
+                } catch (MenuNotFoundException e2) {
+                    System.out.println("El menu no  se pudo guardar en la base de datos");
+                }
+            } catch (Exception e) {
+                System.out.println("Ocurrió un error al consultar el menú en la base de datos.");
             }
-        }		
+        }
+        System.out.println("Todos los menus se guardaron");
 	}
 
     public void guardarReportes(Reporte reporte){

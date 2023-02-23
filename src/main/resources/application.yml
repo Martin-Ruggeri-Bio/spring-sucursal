@@ -26,7 +26,7 @@ logging:
 
 
 cron:
-  expression: "*/5 * * * * *"
+  expression: "*/10 * * * * *"
 
 logginSucursal:
   user: "martinr"
