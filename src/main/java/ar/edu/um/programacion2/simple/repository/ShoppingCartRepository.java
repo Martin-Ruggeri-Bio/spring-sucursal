@@ -13,5 +13,5 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Stri
     // para vaciar el carrito del cliente una vez completada la venta
     void deleteByClient_Id(String clientId);
     // numero de items en su carrito
-    Long countByClient_Token(String token);
+    Long countByClient_Id(String clientId);
 }

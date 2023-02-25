@@ -1,5 +1,6 @@
 package ar.edu.um.programacion2.simple.controller;
 
+import ar.edu.um.programacion2.simple.dtos.Menus;
 import ar.edu.um.programacion2.simple.dtos.Message;
 import ar.edu.um.programacion2.simple.model.ShoppingCart;
 import ar.edu.um.programacion2.simple.model.User;
@@ -36,21 +37,48 @@ public class ShoppingCartController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String userName = user.getUserName();
-        return new ResponseEntity<>(this.shoppingCartService.getListByClient(userName), HttpStatus.OK);
+        String clientId = user.getId();
+        return new ResponseEntity<>(this.shoppingCartService.getListByClient(clientId), HttpStatus.OK);
     }
-    @GetMapping("/count/{client_id}")
-    public ResponseEntity<Long> countByClient(@PathVariable("client_id")String id){
-        return new ResponseEntity<>(this.shoppingCartService.getCountByClient(id),HttpStatus.OK);
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> countByClient(@RequestHeader("Authorization") String tokenHeader){
+        String token = tokenHeader.replace("Bearer ", "");
+        Optional<User> userOptional = userService.getByToken(token);
+        User user = userOptional.orElse(null);
+        
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String clientId = user.getId();
+        return new ResponseEntity<>(this.shoppingCartService.getCountByClient(clientId),HttpStatus.OK);
     }
-    @PostMapping()
-    public ResponseEntity<Message> addProduct(@Valid @RequestBody ShoppingCart shoppingCart,
-                                              BindingResult bindingResult){
-        if (bindingResult.hasErrors())
-            return new ResponseEntity<>(new Message("Revise los campos"),HttpStatus.BAD_REQUEST);
-        this.shoppingCartService.addProduct(shoppingCart);
-        return new ResponseEntity<>(new Message("Producto agregado"),HttpStatus.OK);
+
+    @PostMapping("/addMenu")
+    public ResponseEntity<Message> addMenu(@RequestHeader("Authorization") String tokenHeader,
+        @Valid @RequestBody Menus menus, BindingResult bindingResult){
+            String token = tokenHeader.replace("Bearer ", "");
+            if (token == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            Optional<User> userOptional = userService.getByToken(token);
+            User user = userOptional.orElse(null);
+            
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            if (bindingResult.hasErrors())
+                return new ResponseEntity<>(new Message("Revise los campos"),HttpStatus.BAD_REQUEST);
+            ShoppingCart shoppingCart = new ShoppingCart();
+            shoppingCart.setMenu(menus.getMenu());
+            shoppingCart.setClient(user);
+            shoppingCart.setAmount(menus.getAmount());
+            this.shoppingCartService.addProduct(shoppingCart);
+            return new ResponseEntity<>(new Message("Producto agregado"),HttpStatus.OK);
     }
+
+
     @DeleteMapping("/clean/{item_id}")
     public ResponseEntity<Message> removeProduct(@PathVariable("item_id")String id){
         this.shoppingCartService.removeProduct(id);

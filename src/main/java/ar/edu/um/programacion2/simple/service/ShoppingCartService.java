@@ -15,8 +15,8 @@ public class ShoppingCartService {
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
 
-    public List<ShoppingCart> getListByClient(String userName){
-        return this.shoppingCartRepository.findByClient_UserName(userName);
+    public List<ShoppingCart> getListByClient(String clientId){
+        return this.shoppingCartRepository.findByClient_Id(clientId);
     }
     public void cleanShoppingCart(String clientId){
         this.shoppingCartRepository.deleteByClient_Id(clientId);
@@ -28,6 +28,6 @@ public class ShoppingCartService {
         this.shoppingCartRepository.save(shoppingCart);
     }
     public Long getCountByClient(String clientId){
-        return this.shoppingCartRepository.countByClient_Token(clientId);
+        return this.shoppingCartRepository.countByClient_Id(clientId);
     }
 }
