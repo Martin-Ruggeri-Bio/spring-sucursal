@@ -6,7 +6,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import ar.edu.um.programacion2.simple.model.Menu;
+// import ar.edu.um.programacion2.simple.model.User;
 import ar.edu.um.programacion2.simple.service.MenuService;
+// import ar.edu.um.programacion2.simple.service.UserService;
+
+// import java.util.UUID;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
@@ -17,6 +21,9 @@ public class Application implements CommandLineRunner {
 
 	@Autowired
 	private MenuService menuService;
+
+	// @Autowired
+	// private UserService userService;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -33,7 +40,14 @@ public class Application implements CommandLineRunner {
 		System.out.println("este es el menu por default");
 		System.out.println(menu);
 		menu = menuService.add(menu);
-		
+
+		// String token = UUID.randomUUID().toString();
+		// User user = new User(
+		// 	"Martin",
+		// 	"123abc",
+		// 	token
+		// );
+        // userService.save(user);
 	}
 }
 

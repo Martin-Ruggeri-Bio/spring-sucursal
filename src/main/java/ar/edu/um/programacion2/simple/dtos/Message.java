@@ -1,4 +1,4 @@
-package ar.edu.um.programacion2.simple.model;
+package ar.edu.um.programacion2.simple.dtos;
 
 public class Message {
     private String infoMessage;

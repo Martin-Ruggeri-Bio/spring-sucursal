@@ -28,6 +28,6 @@ public class ShoppingCartService {
         this.shoppingCartRepository.save(shoppingCart);
     }
     public Long getCountByClient(String clientId){
-        return this.shoppingCartRepository.countByClient_Id(clientId);
+        return this.shoppingCartRepository.countByClient_Token(clientId);
     }
 }

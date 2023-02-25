@@ -20,7 +20,6 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Service
-// @Transactional
 public class ConsultaService {
     @Value("${logginSucursal.user}")
     private String user;

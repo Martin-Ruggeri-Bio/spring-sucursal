@@ -63,6 +63,6 @@ public class SaleService {
             this.detailService.createDetail(detail);
         }
         // por ultimo limpio el carrito de compra
-        this.shoppingCartService.cleanShoppingCart(client.getId());
+        this.shoppingCartService.cleanShoppingCart(client.getToken());
     }
 }

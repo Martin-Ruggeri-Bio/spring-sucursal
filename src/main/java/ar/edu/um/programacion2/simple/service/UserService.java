@@ -19,6 +19,9 @@ public class UserService {
     public Optional<User> getByUserName(String userName){
         return userRepository.findByUserName(userName);
     }
+    public Optional<User> getByToken(String token){
+        return userRepository.findByToken(token);
+    }
     public boolean existByUserName(String userName){
         return userRepository.existsByUserName(userName);
     }
