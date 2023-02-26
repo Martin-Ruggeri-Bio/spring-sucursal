@@ -24,6 +24,9 @@ public class Detail {
     @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
     private Sale sale;
 
+    @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+    private User client;
+
     @NotNull
     private int amount;
 

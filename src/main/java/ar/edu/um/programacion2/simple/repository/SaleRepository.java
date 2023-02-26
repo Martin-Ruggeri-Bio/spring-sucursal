@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface SaleRepository extends JpaRepository<Sale,String> {
-    List<Sale> findByClient_UserName(String userName);
+    List<Sale> findByClient_Id(String clientId);
 }

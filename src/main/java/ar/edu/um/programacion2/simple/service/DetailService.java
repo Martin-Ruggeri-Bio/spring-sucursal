@@ -21,4 +21,7 @@ public class DetailService {
     public List<Detail> getDetailBySale(String saleId){
         return this.detailRepository.findBySale_Id(saleId);
     }
+    public List<Detail> getDetailByClient(String clientId){
+        return this.detailRepository.findByClient_Id(clientId);
+    }
 }

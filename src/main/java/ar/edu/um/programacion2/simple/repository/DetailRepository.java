@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface DetailRepository extends JpaRepository<Detail, String> {
     List<Detail> findBySale_Id(String saleId);
+    List<Detail> findByClient_Id(String clientId);
 }

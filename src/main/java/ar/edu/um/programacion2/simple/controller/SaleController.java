@@ -39,8 +39,8 @@ public class SaleController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String userName = user.getUserName();
-        return new ResponseEntity<>(this.saleService.getSalesByClient(userName), HttpStatus.OK);
+        String clientId = user.getId();
+        return new ResponseEntity<>(this.saleService.getSalesByClient(clientId), HttpStatus.OK);
     }
     @PostMapping(path = "/create")
     public ResponseEntity<Message> createSale(@RequestHeader(value="Authorization", required=true) String tokenHeader){
@@ -55,8 +55,8 @@ public class SaleController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String userName = user.getUserName();
-        this.saleService.createSale(userName);
+        String clientId = user.getId();
+        this.saleService.createSale(clientId);
         return new ResponseEntity<>(new Message("Compra exitosa"), HttpStatus.OK);
     }
 }

@@ -29,16 +29,16 @@ public class SaleService {
     @Autowired
     private DetailService detailService;
 
-    public List<Sale> getSalesByClient(String userName){
-        return this.saleRepository.findByClient_UserName(userName);
+    public List<Sale> getSalesByClient(String clientId){
+        return this.saleRepository.findByClient_Id(clientId);
     }
 
     // generar ventas de acuerdo a los productos que el cliente tenga en su carrito
-    public void createSale(String userName){
+    public void createSale(String clientId){
         // obtengo el usuario
-        User client = this.userService.getByUserName(userName).get();
+        User client = this.userService.getById(clientId).get();
         // obtengo la lista de productos del carrito del cliente
-        List<ShoppingCart> shoppingCartList = this.shoppingCartService.getListByClient(client.getUserName());
+        List<ShoppingCart> shoppingCartList = this.shoppingCartService.getListByClient(clientId);
         // establecemos el formato decimal, para no tener tantos decimales
         DecimalFormat decimalFormat = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
         decimalFormat.setRoundingMode(RoundingMode.DOWN);
@@ -60,6 +60,7 @@ public class SaleService {
             detail.setMenu(shoppingCart.getMenu());
             detail.setAmount(shoppingCart.getAmount());
             detail.setSale(saveSale);
+            detail.setClient(client);
             this.detailService.createDetail(detail);
         }
         // por ultimo limpio el carrito de compra

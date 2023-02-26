@@ -19,6 +19,10 @@ public class UserService {
     public Optional<User> getByUserName(String userName){
         return userRepository.findByUserName(userName);
     }
+    public Optional<User> getById(String userId){
+        return userRepository.findById(userId);
+    }
+
     public Optional<User> getByToken(String token){
         return userRepository.findByToken(token);
     }
