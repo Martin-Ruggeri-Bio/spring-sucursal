@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -29,8 +30,17 @@ public class SaleService {
     @Autowired
     private DetailService detailService;
 
+
+    public List<Sale> getSalesAll(){
+        return this.saleRepository.findAll();
+    }
+
     public List<Sale> getSalesByClient(String clientId){
         return this.saleRepository.findByClient_Id(clientId);
+    }
+
+    public List<Sale> findByDateBetween(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+        return saleRepository.findByDateBetween(fechaInicio, fechaFin);
     }
 
     // generar ventas de acuerdo a los productos que el cliente tenga en su carrito
@@ -51,7 +61,7 @@ public class SaleService {
         double total = shoppingCartList.stream().mapToDouble(shoppingCartItem -> shoppingCartItem.getMenu().getPrecio()
                 * shoppingCartItem.getAmount()).sum();
         // genero la venta con el formato que obtuvimos
-        Sale sale = new Sale(Double.parseDouble(decimalFormat.format(total)), new Date(), client);
+        Sale sale = new Sale(Double.parseDouble(decimalFormat.format(total)), LocalDateTime.now(), client);
         // guardo en la base de datos
         Sale saveSale = this.saleRepository.save(sale);
         // creo un detalle cor cada item del carrito

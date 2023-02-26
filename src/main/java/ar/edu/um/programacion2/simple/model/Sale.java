@@ -6,8 +6,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-// import java.util.List;
+
+import java.time.LocalDateTime;
 
 import lombok.Data;
 
@@ -25,16 +25,13 @@ public class Sale {
     private Double total;
 
     @NotNull
-    @Column(columnDefinition = "DATE")
-    private Date date;
-
-    // @OneToMany(mappedBy = "sale",  cascade = CascadeType.ALL, orphanRemoval = true)
-    // private List<Detail> detalleVenta;
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime date;
 
     @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
     private User client;
 
-    public Sale(double total, Date date, User client) {
+    public Sale(double total, LocalDateTime date, User client) {
         this.total = total;
         this.date = date;
         this.client = client;
