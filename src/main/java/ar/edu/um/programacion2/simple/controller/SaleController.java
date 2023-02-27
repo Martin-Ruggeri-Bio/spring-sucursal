@@ -2,6 +2,7 @@ package ar.edu.um.programacion2.simple.controller;
 
 import ar.edu.um.programacion2.simple.dtos.DateRange;
 import ar.edu.um.programacion2.simple.dtos.Message;
+import ar.edu.um.programacion2.simple.dtos.Sales;
 import ar.edu.um.programacion2.simple.model.Sale;
 import ar.edu.um.programacion2.simple.model.User;
 import ar.edu.um.programacion2.simple.service.SaleService;
@@ -43,8 +44,8 @@ public class SaleController {
         return new ResponseEntity<>(this.saleService.getSalesAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/date-between")
-    public ResponseEntity<List<Sale>> findByDateBetween(@RequestHeader(value="Authorization", required=true) String tokenHeader,
+    @PostMapping("/date-between")
+    public ResponseEntity<Sales> findByDateBetween(@RequestHeader(value="Authorization", required=true) String tokenHeader,
                                                         @Valid @RequestBody DateRange dateRange, BindingResult bindingResult) {
         String token = tokenHeader.replace("Bearer ", "");
         if (token == null) {
@@ -56,7 +57,8 @@ public class SaleController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return new ResponseEntity<>(this.saleService.findByDateBetween(dateRange.getFechaInicio(), dateRange.getFechaFin()), HttpStatus.OK);
+        Sales sales = new Sales(this.saleService.findByDateBetween(dateRange.getFechaInicio(), dateRange.getFechaFin()));
+        return new ResponseEntity<>(sales, HttpStatus.OK);
     }
 
 

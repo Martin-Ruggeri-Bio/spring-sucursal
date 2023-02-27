@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import ar.edu.um.programacion2.simple.exception.MenuNotFoundException;
 import ar.edu.um.programacion2.simple.dtos.Consulta;
+import ar.edu.um.programacion2.simple.dtos.Message;
 import ar.edu.um.programacion2.simple.model.Menu;
 import ar.edu.um.programacion2.simple.model.ReporteHistorico;
 import ar.edu.um.programacion2.simple.model.ReporteRecurrente;
@@ -26,13 +27,11 @@ public class ConsultaService {
     @Value("${logginSucursal.pass}")
     private String pass;
     @Value("${logginSucursal.id_tocken}")
-    private String id_tocken;
+    private String id_tocken_sucursal;
     @Value("${logginSucursal.consultaJsonHead}")
     private String consultaJsonHead;
 	@Autowired
 	private MenuService menuService;
-    @Autowired
-	private ReporteHistoricoService reporteHistoricoService;
     @Autowired
 	private ReporteRecurrenteService reporteRecurrenteService;
 
@@ -55,13 +54,36 @@ public class ConsultaService {
             .post()
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.id_tocken + "\"")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.id_tocken_sucursal + "\"")
             .body(BodyInserters.fromValue(this.consultaJsonHead))
             .retrieve()
             .bodyToMono(Consulta.class);
         
         return consulta.block();
 
+    }
+
+    @Transactional
+    public void enviar_reporte_historico(ReporteHistorico reporteHistorico)  {
+        WebClient webClient = WebClient
+            .builder()
+            .baseUrl("http://localhost:8095/Reporte/Historico")
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .build();
+
+        // Realiza la llamada POST a la API del servicio de reporte y almacena el resultado en un Mono de tipo Message
+        Mono<Message> response = webClient
+            .post()
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .body(BodyInserters.fromValue(reporteHistorico))
+            .retrieve()
+            .bodyToMono(Message.class);
+        
+        response.subscribe(
+                message -> System.out.println("Respuesta del servicio de reporte: " + message.getInfoMessage()),
+                error -> System.err.println("Error al llamar al servicio de reporte: " + error.getMessage())
+            );
     }
 
     /**
@@ -98,7 +120,7 @@ public class ConsultaService {
         System.out.println("Todos los menus se guardaron");
 	}
 
-    public void guardarReportes(Reporte reporte){
+    public void enviarReportes(Reporte reporte){
         //recorro los menus
         System.out.println("Evaluando reporte");
         if(reporte.getTipo().equals("historico")){
@@ -109,7 +131,7 @@ public class ConsultaService {
                 reporte.getFechaInicio(),
                 reporte.getFechaFin()
             );
-            this.reporteHistoricoService.add(reporteHistorico);
+            this.enviar_reporte_historico(reporteHistorico);
         }else if(reporte.getTipo().equals("recurrente")){
             System.out.println("Hay reporte recurrente.");
             ReporteRecurrente reporteRecurrente = new ReporteRecurrente(
@@ -144,7 +166,7 @@ public class ConsultaService {
             }else if (consulta.getAccion().equals("reporte")){
                 System.out.println("Hay reportes nuevos.");
                 Reporte reporte = consulta.getReporte();
-                this.guardarReportes(reporte);
+                this.enviarReportes(reporte);
             }else{
                 System.out.println("No hay nada nuevo.");
             }
