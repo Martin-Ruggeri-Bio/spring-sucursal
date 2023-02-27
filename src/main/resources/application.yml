@@ -38,3 +38,6 @@ jwt:
   secret: secret
   expiration: 3600
   accessTokenCookieName: AuthToken
+
+servicioReporte:
+  token_id: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTZXJ2aWNpb0ZyYW5xdWljaWEifQ.B9a3AetiLW_xJ0vIonIQRahv-5csjOS9SeuFdyOY_UY"

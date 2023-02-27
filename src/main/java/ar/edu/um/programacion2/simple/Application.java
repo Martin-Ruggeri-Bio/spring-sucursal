@@ -5,12 +5,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import ar.edu.um.programacion2.simple.model.Menu;
-// import ar.edu.um.programacion2.simple.model.User;
-import ar.edu.um.programacion2.simple.service.MenuService;
-// import ar.edu.um.programacion2.simple.service.UserService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
-// import java.util.UUID;
+import ar.edu.um.programacion2.simple.model.User;
+import ar.edu.um.programacion2.simple.service.UserService;
+import ar.edu.um.programacion2.simple.model.Menu;
+import ar.edu.um.programacion2.simple.service.MenuService;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
@@ -22,8 +23,8 @@ public class Application implements CommandLineRunner {
 	@Autowired
 	private MenuService menuService;
 
-	// @Autowired
-	// private UserService userService;
+	@Autowired
+	private UserService userService;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -41,17 +42,14 @@ public class Application implements CommandLineRunner {
 		System.out.println(menu);
 		menu = menuService.add(menu);
 
-		// String token = UUID.randomUUID().toString();
-		// User user = new User(
-		// 	"Martin",
-		// 	"123abc",
-		// 	token
-		// );
-        // userService.save(user);
+		User user = new User();
+		user.setUserName("ServicioReporte");
+		String token = Jwts.builder()
+                    .setSubject(user.getUserName())
+                    .claim("userId", user.getId())
+                    .signWith(SignatureAlgorithm.HS256, "secreto")
+                    .compact();
+		user.setToken(token);
+		userService.save(user);
 	}
 }
-
-
-/* "Super Pancho", "Pancho con jamon, queso, palta y lluvia de papas", 750.00,
-			"https://cdn.cienradios.com/wp-content/uploads/sites/13/2020/04/Panchos-argentinos-nota.jpg",
-			true, "2022-07-31T12:00:00Z", "2022-07-31T12:00:00Z" */
