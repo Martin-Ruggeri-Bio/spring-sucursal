@@ -44,6 +44,7 @@ public class SaleController {
         return new ResponseEntity<>(this.saleService.getSalesAll(), HttpStatus.OK);
     }
 
+    // SaleControler
     @PostMapping("/date-between")
     public ResponseEntity<Sales> findByDateBetween(@RequestHeader(value="Authorization", required=true) String tokenHeader,
                                                         @Valid @RequestBody DateRange dateRange, BindingResult bindingResult) {
