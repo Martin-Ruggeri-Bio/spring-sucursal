@@ -3,7 +3,7 @@ package ar.edu.um.programacion2.simple.model;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
-
+import java.time.LocalDateTime;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -17,17 +17,8 @@ public class Detail {
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    
-    @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
-    private Menu menu;
-    
-    @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
-    private Sale sale;
-
-    @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
-    private User client;
-
-    @NotNull
-    private int amount;
-
+    private LocalDateTime fecha;
+    private String ventaId;
+    private Integer menu;
+    private Float precio;
 }

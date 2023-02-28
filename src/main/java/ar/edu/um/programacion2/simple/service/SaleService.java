@@ -60,17 +60,21 @@ public class SaleService {
         double total = shoppingCartList.stream().mapToDouble(shoppingCartItem -> shoppingCartItem.getMenu().getPrecio()
                 * shoppingCartItem.getAmount()).sum();
         // genero la venta con el formato que obtuvimos
-        Sale sale = new Sale(Double.parseDouble(decimalFormat.format(total)), LocalDateTime.now(), client);
+        LocalDateTime date = LocalDateTime.now();
+        Sale sale = new Sale(Double.parseDouble(decimalFormat.format(total)), date, client);
         // guardo en la base de datos
         Sale saveSale = this.saleRepository.save(sale);
         // creo un detalle cor cada item del carrito
         for (ShoppingCart shoppingCart : shoppingCartList) {
-            Detail detail = new Detail();
-            detail.setMenu(shoppingCart.getMenu());
-            detail.setAmount(shoppingCart.getAmount());
-            detail.setSale(saveSale);
-            detail.setClient(client);
-            this.detailService.createDetail(detail);
+            Integer amountDetail = shoppingCart.getAmount();
+            for (int index = 0; index < amountDetail; index++) {
+                Detail detail = new Detail();
+                detail.setMenu(shoppingCart.getMenu().getId());
+                detail.setFecha(date);
+                detail.setVentaId(saveSale.getId());
+                detail.setPrecio(shoppingCart.getMenu().getPrecio());
+                this.detailService.createDetail(detail);
+            }
         }
         // por ultimo limpio el carrito de compra
         this.shoppingCartService.cleanShoppingCart(client.getToken());
