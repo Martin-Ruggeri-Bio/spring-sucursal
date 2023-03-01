@@ -17,10 +17,12 @@ import ar.edu.um.programacion2.simple.model.ReporteHistorico;
 import ar.edu.um.programacion2.simple.model.ReporteRecurrente;
 import ar.edu.um.programacion2.simple.dtos.Reporte;
 import reactor.core.publisher.Mono;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class ConsultaService {
     @Value("${logginSucursal.user}")
     private String user;
@@ -65,9 +67,10 @@ public class ConsultaService {
 
     @Transactional
     public void enviar_reporte_historico(ReporteHistorico reporteHistorico)  {
+        log.info("Estableciendo conexion con el servicio de reporte");
         WebClient webClient = WebClient
             .builder()
-            .baseUrl("http://localhost:8095/Reporte/Historico")
+            .baseUrl("http://localhost:8095/Reporte/CrearHistorico")
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build();
 
@@ -79,11 +82,7 @@ public class ConsultaService {
             .body(BodyInserters.fromValue(reporteHistorico))
             .retrieve()
             .bodyToMono(Message.class);
-        
-        response.subscribe(
-                message -> System.out.println("Respuesta del servicio de reporte: " + message.getInfoMessage()),
-                error -> System.err.println("Error al llamar al servicio de reporte: " + error.getMessage())
-            );
+        log.info(response.block().getInfoMessage());
     }
 
     /**
