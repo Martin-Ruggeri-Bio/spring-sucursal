@@ -34,8 +34,6 @@ public class ConsultaService {
     private String consultaJsonHead;
 	@Autowired
 	private MenuService menuService;
-    @Autowired
-	private ReporteRecurrenteService reporteRecurrenteService;
 
     /**
      * @author Martin
@@ -85,6 +83,43 @@ public class ConsultaService {
         log.info(response.block().getInfoMessage());
     }
 
+    @Transactional
+    public void enviar_reporte_recurrente(ReporteRecurrente reporteRecurrente)  {
+        log.info("Estableciendo conexion con el servicio de reporte");
+        WebClient webClient = WebClient
+            .builder()
+            .baseUrl("http://localhost:8095/Reporte/CrearRecurrente")
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .build();
+
+        // Realiza la llamada POST a la API del servicio de reporte y almacena el resultado en un Mono de tipo Message
+        Mono<Message> response = webClient
+            .post()
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .body(BodyInserters.fromValue(reporteRecurrente))
+            .retrieve()
+            .bodyToMono(Message.class);
+        log.info(response.block().getInfoMessage());
+    }
+
+    @Transactional
+    public void cancelar_reporte_recurrente(){
+        log.info("Estableciendo conexion con el servicio de reporte");
+        WebClient webClient = WebClient
+            .builder()
+            .baseUrl("http://localhost:8095/Reporte/CancelaRecurrente")
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .build();
+
+        // Realiza la llamada POST a la API del servicio de reporte y almacena el resultado en un Mono de tipo Message
+        Mono<Message> response = webClient
+            .post()
+            .retrieve()
+            .bodyToMono(Message.class);
+        log.info(response.block().getInfoMessage());
+    }
+
     /**
      * @author Martin
      * Funcion que actua sobre la base de datos de menus segun la comparacion de ambos contenidos
@@ -123,7 +158,7 @@ public class ConsultaService {
         //recorro los menus
         System.out.println("Evaluando reporte");
         if(reporte.getTipo().equals("historico")){
-            System.out.println("Hay reporte historico.");
+            System.out.println("Pedido de reporte historico.");
             ReporteHistorico reporteHistorico = new ReporteHistorico(
                 reporte.getId(),
                 reporte.getTipo(),
@@ -132,7 +167,7 @@ public class ConsultaService {
             );
             this.enviar_reporte_historico(reporteHistorico);
         }else if(reporte.getTipo().equals("recurrente")){
-            System.out.println("Hay reporte recurrente.");
+            System.out.println("Pedido de reporte recurrente.");
             ReporteRecurrente reporteRecurrente = new ReporteRecurrente(
                 reporte.getId(),
                 reporte.getTipo(),
@@ -140,7 +175,10 @@ public class ConsultaService {
                 reporte.getFechaFin(),
                 reporte.getIntervalo()
             );
-            this.reporteRecurrenteService.add(reporteRecurrente);
+            this.enviar_reporte_recurrente(reporteRecurrente);
+        }else if(reporte.getTipo().equals("cancelar")){
+            System.out.println("Pedido de cancelacion de reporte recurrente.");
+            this.cancelar_reporte_recurrente();
         }else{
             System.out.println("No hay reportes.");
         }		
