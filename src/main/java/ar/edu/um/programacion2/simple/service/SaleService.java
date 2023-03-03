@@ -77,6 +77,6 @@ public class SaleService {
             }
         }
         // por ultimo limpio el carrito de compra
-        this.shoppingCartService.cleanShoppingCart(client.getToken());
+        this.shoppingCartService.cleanShoppingCart(clientId);
     }
 }
