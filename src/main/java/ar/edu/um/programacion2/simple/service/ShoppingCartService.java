@@ -30,4 +30,13 @@ public class ShoppingCartService {
     public Long getCountByClient(String clientId){
         return this.shoppingCartRepository.countByClient_Id(clientId);
     }
+
+    public void updateProduct(String id, ShoppingCart shoppingCart){
+        this.shoppingCartRepository.deleteById(id);
+        this.shoppingCartRepository.save(shoppingCart);
+    }
+
+    public ShoppingCart getByClientAndMenu(String clientId, Integer menuId){
+        return this.shoppingCartRepository.findFirstByClient_IdAndMenu_Id(clientId, menuId);
+    }
 }

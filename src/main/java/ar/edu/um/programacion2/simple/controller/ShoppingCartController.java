@@ -70,11 +70,22 @@ public class ShoppingCartController {
             }
             if (bindingResult.hasErrors())
                 return new ResponseEntity<>(new Message("Revise los campos"),HttpStatus.BAD_REQUEST);
-            ShoppingCart shoppingCart = new ShoppingCart();
-            shoppingCart.setMenu(menus.getMenu());
-            shoppingCart.setClient(user);
-            shoppingCart.setAmount(menus.getAmount());
-            this.shoppingCartService.addProduct(shoppingCart);
+            ShoppingCart shoppingCartOld = this.shoppingCartService.getByClientAndMenu(user.getId(), menus.getMenu().getId());
+            if (shoppingCartOld != null) {
+                // si el menu ya esta en carrito del cliente aumenta su cantidad
+                ShoppingCart shoppingCartNew = new ShoppingCart();
+                shoppingCartNew.setMenu(menus.getMenu());
+                shoppingCartNew.setClient(user);
+                shoppingCartNew.setAmount(shoppingCartOld.getAmount() + menus.getAmount());
+                this.shoppingCartService.updateProduct(shoppingCartOld.getId(), shoppingCartNew);
+            } else {
+                //sino lo agrega
+                ShoppingCart shoppingCart = new ShoppingCart();
+                shoppingCart.setMenu(menus.getMenu());
+                shoppingCart.setClient(user);
+                shoppingCart.setAmount(menus.getAmount());
+                this.shoppingCartService.addProduct(shoppingCart);
+            }
             return new ResponseEntity<>(new Message("Producto agregado"),HttpStatus.OK);
     }
 
@@ -85,4 +96,26 @@ public class ShoppingCartController {
         return new ResponseEntity<>(new Message("Eliminado"),HttpStatus.OK);
     }
 
+    @PutMapping("/update/{item_id}")
+    public ResponseEntity<Message> updateProduct(@PathVariable("item_id")String id, @RequestHeader("Authorization") String tokenHeader,
+        @Valid @RequestBody Menus menus, BindingResult bindingResult){
+            String token = tokenHeader.replace("Bearer ", "");
+            if (token == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            Optional<User> userOptional = userService.getByToken(token);
+            User user = userOptional.orElse(null);
+            
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            if (bindingResult.hasErrors())
+                return new ResponseEntity<>(new Message("Revise los campos"),HttpStatus.BAD_REQUEST);
+            ShoppingCart shoppingCart = new ShoppingCart();
+            shoppingCart.setMenu(menus.getMenu());
+            shoppingCart.setClient(user);
+            shoppingCart.setAmount(menus.getAmount());
+            this.shoppingCartService.updateProduct(id, shoppingCart);
+            return new ResponseEntity<>(new Message("Actualizado correctamente"),HttpStatus.OK);
+    }
 }
