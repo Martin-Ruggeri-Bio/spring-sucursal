@@ -31,7 +31,7 @@ cron:
 logginSucursal:
   user: "martinr"
   pass: "martin123"
-  id_tocken: "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ0aW5yIiwiYXV0aCI6IiIsImV4cCI6MTk5MjAwNzA4N30.2ukdNV8VMdoVr7ziPub6Ak7Or2iKnR5HF3VQIltZixlGIluoYSUxKajDypighSpWXdsgpe_7GWoMJ_SDhLObWg"
+  id_tocken: "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ0aW5yIiwiYXV0aCI6IiIsImV4cCI6MTk5MzIzMzU0NX0.GN22kVxrF_Vo1_3W93MkOTO5rDWxixRs3UDQD12pXje-ThCWd2d1GQK54h_OysUhXCyaU5-6eohQlc6g7OAtCA"
   consultaJsonHead: "{\"accion\":\"consulta\",\"franquiciaID\":\"b619b291-1e56-4316-9f66-7af950694fb0\"}"
 
 jwt:
