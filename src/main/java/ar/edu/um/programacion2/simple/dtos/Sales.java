@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Sales {
-    private List<Sale> sales;
+    private List<Sale> detail;
 }

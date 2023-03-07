@@ -68,7 +68,7 @@ public class ConsultaService {
         log.info("Estableciendo conexion con el servicio de reporte");
         WebClient webClient = WebClient
             .builder()
-            .baseUrl("http://localhost:8095/Reporte/CrearHistorico")
+            .baseUrl("http://localhost:8095/ReporteHistorico/Crear")
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build();
 
@@ -88,7 +88,7 @@ public class ConsultaService {
         log.info("Estableciendo conexion con el servicio de reporte");
         WebClient webClient = WebClient
             .builder()
-            .baseUrl("http://localhost:8095/Reporte/CrearRecurrente")
+            .baseUrl("http://localhost:8095/ReportesRecurrentesHilos/Crear")
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build();
 
@@ -104,20 +104,19 @@ public class ConsultaService {
     }
 
     @Transactional
-    public void cancelar_reporte_recurrente(){
-        log.info("Estableciendo conexion con el servicio de reporte");
-        WebClient webClient = WebClient
-            .builder()
-            .baseUrl("http://localhost:8095/Reporte/CancelaRecurrente")
-            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .build();
-
-        // Realiza la llamada POST a la API del servicio de reporte y almacena el resultado en un Mono de tipo Message
+    public void cancelar_reporte_recurrente(Long reporteId) {
+        log.info("Cancelando reporte recurrente con ID: {}", reporteId);
+    
+        WebClient webClient = WebClient.create("http://localhost:8095");
+    
         Mono<Message> response = webClient
-            .post()
+            .delete()
+            .uri("/ReportesRecurrentesHilos/Cancelar/{idReporte}", reporteId)
             .retrieve()
             .bodyToMono(Message.class);
-        log.info(response.block().getInfoMessage());
+    
+        Message message = response.block();
+        log.info("Respuesta del servicio de reporte: {}", message.getInfoMessage());
     }
 
     /**
@@ -178,7 +177,7 @@ public class ConsultaService {
             this.enviar_reporte_recurrente(reporteRecurrente);
         }else if(reporte.getTipo().equals("cancelar")){
             System.out.println("Pedido de cancelacion de reporte recurrente.");
-            this.cancelar_reporte_recurrente();
+            this.cancelar_reporte_recurrente(reporte.getReporteCanceladoId());
         }else{
             System.out.println("No hay reportes.");
         }		

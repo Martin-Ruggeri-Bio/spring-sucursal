@@ -13,5 +13,6 @@ public class Reporte {
 	private String fechaInicio;
     private String fechaFin;
     private String intervalo;
+	private Long reporteCanceladoId;
 
 }
